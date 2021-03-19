@@ -90,7 +90,6 @@ if __name__ == "__main__":
 
 	board = createBoard(size)
 	board = placeBombs(board, bombs)
-	print(board)
 
 	printBoard(board)
 	#takeInput()
