@@ -141,7 +141,7 @@ def printBoardLine(cols):
 def isRevealed(display_board, solution_board, dim_size):
 	for y in range(0,dim_size-1):
 		for x in range(0,dim_size-1):
-			if display_board[y][x] == ' ' or solution_board[y][x] == '*':
+			if display_board[y][x] == ' ' and solution_board[y][x] != '*':
 				return(False)
 	return(True)
 
