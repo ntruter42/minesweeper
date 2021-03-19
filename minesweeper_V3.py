@@ -1,4 +1,5 @@
 import os, time, random
+import sys
 # You may create additional functions here:
 def main_screen():
 
@@ -103,17 +104,26 @@ def printBoard(board):
 	os.system("cls||clear")
 	rows= len(board)
 	cols= rows + rows + 2
+	#if rows > 10:
+	#	cols += 1
 
 	output = ''
 	counter= 0
+	extra_space = 0
+	if rows > 10:
+		extra_space += 1
 	for x in range(0, cols):
-		if x == 0 or x==1:
+		if x == 0 or x==1 or x==1+extra_space:
 			output= output + ' '
-		elif x > 1 and x%2==0:
+		elif x > extra_space + 1 and x%2==1:
+			if counter % 2 == 0 and counter > 9:
+				output += '\x1b[34m'
 			output= output + str(counter)
+			output += '\x1b[0m'
+			print('', end = "")
 			counter += 1
-		elif x > 2 and x%2==1:
-			output= output + " "
+		elif x > extra_space + 2 and x%2==0 and counter < 10:
+			output= output + ' '
 	print(output)
 
 	printBoardLine(cols)
@@ -121,8 +131,10 @@ def printBoard(board):
 	for y in range(0, rows):
 		counter= 0
 		output = ''
+		if y < 10 and rows > 10:
+			output += ' '
 		output = output + str(y)
-		for x in range(0, cols - 1):
+		for x in range(0, cols - 2):
 			if x%2==0:
 				output = output + "|"
 			else:
@@ -157,6 +169,11 @@ def play(dim_size, num_bombs):
 	while True:
 		x_input= int(input("Enter X Coordinate: "))
 		y_input= int(input("Enter Y Coordinate: "))
+		if isRevealed(display_board, solution_board, dim_size):
+			printBoard(solution_board)
+			print('Game Win!')
+			done= input("Done?: ")
+			main_screen()
 		if x_input > dim_size - 1:
 			print("Invalid X coordinate")
 			time.sleep(1)
@@ -171,11 +188,6 @@ def play(dim_size, num_bombs):
 			done= input("Done?: ")
 			main_screen()
 			# TODO:
-		elif isRevealed(display_board, solution_board, dim_size):
-			printBoard(solution_board)
-			print('Game Win!')
-			done= input("Done?: ")
-			main_screen()
 		elif solution_board[y_input][x_input] == '0':
 			for y in range(y_input - 1, y_input + 2):
 				for x in range(x_input - 1, x_input + 2):
