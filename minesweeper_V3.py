@@ -116,8 +116,8 @@ def printBoard(board):
 		if x == 0 or x==1 or x==1+extra_space:
 			output= output + ' '
 		elif x > extra_space + 1 and x%2==1:
-			if counter % 2 == 0 and counter > 9:
-				output += '\x1b[34m'
+			if counter % 2 == 0:
+				output += '\x1b[90m'
 			output= output + str(counter)
 			output += '\x1b[0m'
 			print('', end = "")
@@ -133,7 +133,10 @@ def printBoard(board):
 		output = ''
 		if y < 10 and rows > 10:
 			output += ' '
+		if y % 2 == 0:
+			output += '\x1b[90m'
 		output = output + str(y)
+		output += '\x1b[0m'
 		for x in range(0, cols - 2):
 			if x%2==0:
 				output = output + "|"
@@ -156,6 +159,16 @@ def isRevealed(display_board, solution_board, dim_size):
 			if display_board[y][x] == ' ' and solution_board[y][x] != '*':
 				return(False)
 	return(True)
+
+def findZero(display_board, solution_board, x, y):
+	if x<0 or x>dim_size - 1 or y<0 or y>dim_size - 1:
+		pass
+	for i in range(y - 1, y + 2):
+		for j in range(x - 1, x + 2):
+			if solution_board[y][x] == '0':
+				display_board[y][x] == solution_board[y][x]
+				findZero(display_board, solution_board, j, i)
+	return(display_board)
 
 # Additional Functions above this comment
 
@@ -187,14 +200,8 @@ def play(dim_size, num_bombs):
 			print('Game Over!')
 			done= input("Done?: ")
 			main_screen()
-			# TODO:
 		elif solution_board[y_input][x_input] == '0':
-			for y in range(y_input - 1, y_input + 2):
-				for x in range(x_input - 1, x_input + 2):
-					if x<0 or x>dim_size - 1 or y<0 or y>dim_size - 1:
-						pass
-					else:
-						display_board[y][x]= solution_board[y][x]
+			display_board = findZero(display_board, solution_board, x_input, y_input)
 			printBoard(display_board)
 		elif solution_board[y_input][x_input] != '0':
 			display_board[y_input][x_input]= solution_board[y_input][x_input]
