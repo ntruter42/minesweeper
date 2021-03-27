@@ -4,11 +4,12 @@ from random import randint
 class RangeError(Exception):
 	pass
 
+red = '\x1b[1;31m'
+grey = '\x1b[90m'
+green = '\x1b[1;32m'
+reset = '\x1b[0m'
 
 def validateInput(user_input, check):
-	red = '\x1b[1;31m'
-	green = '\x1b[1;32m'
-	reset = '\x1b[0m'
 	# Check game choice in string format
 	if check == 0:
 		try:
@@ -115,7 +116,7 @@ def countBombs(board):
 
 	for y in range(0, size):
 		for x in range(0, size):
-			print('\x1b[32m', y, x, '\x1b[0m', end='')
+			#print('\n\x1b[32m', y, x, '\x1b[0m', end='')
 			if board[y][x] == '*':
 				for i in range(y-1, y+2):
 					for j in range(x-1, x+2):
@@ -123,14 +124,14 @@ def countBombs(board):
 							if i == y and j == x:
 								pass
 							else:
-								print('\x1b[31m', i, j, '\x1b[0m', end='')
+								#print('\x1b[31m', i, j, '\x1b[0m', end='')
 								if board[i][j] == ' ':
 									board[i][j] = 1
 								elif board[i][j] == '*':
 									pass
 								elif 0 < board[i][j] < 8:
 									board[i][j] += 1
-	print()
+	#print()
 
 
 def playGame(solution, board):
@@ -156,22 +157,32 @@ def playGame(solution, board):
 		else:
 			print(move)
 			system('sleep 2')
-			# TODO: revealSelection(solution, board, move)
-			# TODO: win = checkBoard(board) -> return(-1/0/1)
+			revealSelection(solution, board, move)
+			# TODO: play = checkBoard(board) -> return(True/False)
 
-'''
+
 def revealSelection(solution, board, move):
 	x = move[0]
 	y = move[1]
+	size = len(board)
 
 	if solution[y][x] == '*':
-		return(1)
-	elif int(solution[y][x]) > 0:
-		board[y][x] = solution[y][x]
+		board[y][x] = '*'
+	elif solution[y][x] == ' ':
+		for i in range(y-1, y+2):
+			for j in range(x-1, x+2):
+				if 0 <= i < size and 0 <= j < size:
+					if i == y and j == x:
+						pass
+					else:
+						board[y][x] = 0
+						next = [i, j]
+						revealSelection(solution, board, next)
+	elif board[y][x] == 0:
+		pass
 	else:
-		for y in range(y - 1, y + 2):
-			pass
-'''
+		board[y][x] = solution[y][x]
+
 
 def printBoard(board):
 	size = len(board)
@@ -191,9 +202,9 @@ def printBoard(board):
 					output += ' '
 				else:
 					if counter % 2 != 0:
-						output += '\x1b[90m'
+						output += grey
 					output += str(counter)
-					output += '\x1b[0m'
+					output += reset
 					counter += 1
 			elif y == 1 or y == output_rows - 1:
 				output += '-'
@@ -201,7 +212,7 @@ def printBoard(board):
 			elif y > 1 and y < output_rows:
 				if x == 0:
 					if counter % 2 != 0:
-						output += '\x1b[90m'
+						output += grey
 					if counter < 10:
 						output += str(counter)
 					else:
@@ -211,7 +222,7 @@ def printBoard(board):
 						output += ' '
 					else:
 						output += str(counter % 10)
-					output += '\x1b[0m'
+					output += reset
 					counter += 1
 				elif x % 3 == 2:
 					output += '|'
