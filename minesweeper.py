@@ -110,6 +110,29 @@ def placeBombs(board, bombs):
 			n += 1
 
 
+def countBombs(board):
+	size = len(board)
+
+	for y in range(0, size):
+		for x in range(0, size):
+			print('\x1b[32m', y, x, '\x1b[0m', end='')
+			if board[y][x] == '*':
+				for i in range(y-1, y+2):
+					for j in range(x-1, x+2):
+						if 0 <= i < size and 0 <= j < size:
+							if i == y and j == x:
+								pass
+							else:
+								print('\x1b[31m', i, j, '\x1b[0m', end='')
+								if board[i][j] == ' ':
+									board[i][j] = 1
+								elif board[i][j] == '*':
+									pass
+								elif 0 < board[i][j] < 8:
+									board[i][j] += 1
+	print()
+
+
 def playGame(solution, board):
 	play = True
 	size = len(board)
@@ -122,7 +145,6 @@ def playGame(solution, board):
 		while move == 0:
 			move = input('Enter S,S to give up and show the solution OR\n'
 			'Input a block to search as row,col: ').split(',')
-			#move = move[:2]
 			move.append(size)
 			move = validateInput(move, 3)
 
@@ -135,7 +157,21 @@ def playGame(solution, board):
 			print(move)
 			system('sleep 2')
 			# TODO: revealSelection(solution, board, move)
+			# TODO: win = checkBoard(board) -> return(-1/0/1)
 
+'''
+def revealSelection(solution, board, move):
+	x = move[0]
+	y = move[1]
+
+	if solution[y][x] == '*':
+		return(1)
+	elif int(solution[y][x]) > 0:
+		board[y][x] = solution[y][x]
+	else:
+		for y in range(y - 1, y + 2):
+			pass
+'''
 
 def printBoard(board):
 	size = len(board)
@@ -182,7 +218,7 @@ def printBoard(board):
 				elif x % 3 == 1:
 					output += ' '
 				else:
-					output += board[y_pos][x_pos]
+					output += str(board[y_pos][x_pos])
 					x_pos += 1
 					if x_pos == size:
 						x_pos = 0
@@ -199,8 +235,8 @@ def main():
 	'2) Show Solution\n'
 	'3) Exit Game')
 	options = [0, 0, 0]
+	board = []
 
-	# TODO: validateInput() + input() = takeInput(message)
 	# options[0] = game choice
 	while options[0] == 0:
 		options[0] = validateInput(input('Your choice: '), 0)
@@ -215,14 +251,13 @@ def main():
 	# board[0] = solution board
 	board = [createBoard(options[1])]
 	placeBombs(board[0], options[2])
+	countBombs(board[0])
+
 	if options[0] == 1:
 		# board[1] = playing board
 		board.append(createBoard(options[1]))
-		'''
+
 		playGame(board[0], board[1])
-		'''
-		for n in range(0, options[1]):
-			print(board[0][n])
 
 	elif options[0] == 2:
 		printBoard(board[0])
